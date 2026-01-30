@@ -1,4 +1,5 @@
 # gold-purity-calculator
+<<<<<<< HEAD
 
 This template should help get you started developing with Vue 3 in Vite.
 
@@ -36,3 +37,6 @@ npm run dev
 ```sh
 npm run build
 ```
+=======
+This simple gold purity calculation
+>>>>>>> ac6d7da2a8b9750599be891f87c6c243ddcb0373
