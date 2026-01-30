@@ -1,47 +1,110 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { ref } from 'vue'
+import GoldPurityCalculator from './components/GoldPurityCalculator.vue'
+import LoginModal from './components/LoginModal.vue'
+import RegisterModal from './components/RegisterModal.vue'
+
+const loginModal = ref(null)
+const registerModal = ref(null)
+const isLoggedIn = ref(false)
+const currentUser = ref('')
+
+const openLoginModal = () => {
+  loginModal.value.openModal()
+}
+
+const openRegisterModal = () => {
+  registerModal.value.openModal()
+}
+
+const handleLogin = (user) => {
+  isLoggedIn.value = true
+  currentUser.value = user
+}
+
+const handleLogout = () => {
+  isLoggedIn.value = false
+  currentUser.value = ''
+}
+
+// Expose functions to modals
+defineExpose({
+  handleLogin
+})
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <div id="app">
+    <header>
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <h1>Gold Purity Calculator</h1>
+        </div>
+        <div class="navbar-links">
+          <span v-if="isLoggedIn" class="welcome-user">Welcome, {{ currentUser }}!</span>
+          <button v-if="!isLoggedIn" class="nav-button" @click="openRegisterModal">Register</button>
+          <button v-if="!isLoggedIn" class="nav-button" @click="openLoginModal">Login</button>
+          <button v-if="isLoggedIn" class="nav-button" @click="handleLogout">Logout</button>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <GoldPurityCalculator />
+    </main>
+    <LoginModal ref="loginModal" @login-success="handleLogin" />
+    <RegisterModal ref="registerModal" @register-success="handleLogin" />
+  </div>
 </template>
 
-<style scoped>
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+}
+
 header {
-  line-height: 1.5;
+  background-color: #007bff;
+  color: white;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+.navbar-brand h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+.navbar-links {
+  display: flex;
+  gap: 1rem;
+}
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+.nav-button {
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+main {
+  padding: 20px;
 }
 </style>
