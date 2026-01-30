@@ -4,51 +4,64 @@
       <h1>Gold Purity Calculator</h1>
       <p class="subtitle">Calculate gold prices with VAT for different karat purities</p>
     </div>
-    
-    <div class="calculators-grid">
+
+    <!-- Login Required Message -->
+    <div v-if="!isLoggedIn" class="login-required">
+      <div class="login-message">
+        <h3>Login Required</h3>
+        <p>Please register or login to use the gold purity calculator.</p>
+        <div class="auth-buttons">
+          <button @click="$emit('open-register')" class="auth-btn register-btn">Register</button>
+          <button @click="$emit('open-login')" class="auth-btn login-btn">Login</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calculator Grid -->
+    <div v-else class="calculators-grid">
       <div v-for="(price, karat) in goldPrices" :key="karat" class="calculator-card">
         <div class="card-header">
           <h3>{{ karat }}K Gold</h3>
           <span class="purity-badge">{{ ((karat / 24) * 100).toFixed(1) }}% Pure</span>
         </div>
-        
+
         <div class="price-display">
           <span class="price-label">Price per Gram</span>
           <span class="price-value">₱{{ price.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
         </div>
-        
+
         <form @submit.prevent="calculate(karat)" class="calculator-form">
           <div class="form-group">
             <label :for="'grams-' + karat">Weight (grams)</label>
-            <input 
-              :id="'grams-' + karat" 
-              type="number" 
-              v-model.number="inputs[karat].grams" 
-              step="0.01" 
+            <input
+              :id="'grams-' + karat"
+              type="number"
+              v-model.number="inputs[karat].grams"
+              step="0.01"
               min="0.01"
               placeholder="Enter weight"
               required
             >
           </div>
-          
+
           <div class="form-group">
             <label :for="'makingCharge-' + karat">Making Charge (₱)</label>
-            <input 
-              :id="'makingCharge-' + karat" 
-              type="number" 
-              v-model.number="inputs[karat].makingCharge" 
-              step="0.01" 
+            <input
+              :id="'makingCharge-' + karat"
+              type="number"
+              v-model.number="inputs[karat].makingCharge"
+              step="0.01"
               min="0"
               placeholder="Enter charge"
               required
             >
           </div>
-          
+
           <button type="submit" class="calculate-btn">
             <span>Calculate</span>
           </button>
         </form>
-        
+
         <transition name="fade">
           <div v-if="results[karat]" class="results">
             <div class="result-item">
@@ -73,6 +86,16 @@
 <script setup>
 import { ref } from 'vue'
 
+// Define props and emits
+const props = defineProps({
+  isLoggedIn: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['open-register', 'open-login'])
+
 // Gold prices per gram in PHP (current prices)
 const goldPrices = {
   24: 9877.90,
@@ -94,6 +117,11 @@ Object.keys(goldPrices).forEach(karat => {
 })
 
 const calculate = (karat) => {
+  if (!props.isLoggedIn) {
+    emit('open-register')
+    return
+  }
+
   const currentPrice = goldPrices[karat]
   const grams = inputs.value[karat].grams
   const makingCharge = inputs.value[karat].makingCharge
@@ -326,6 +354,73 @@ input::placeholder {
 
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
+}
+
+.login-required {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 16px;
+  margin: 2rem 0;
+}
+
+.login-message {
+  text-align: center;
+  max-width: 400px;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+}
+
+.login-message h3 {
+  margin: 0 0 1rem 0;
+  color: #d4af37;
+  font-size: 1.5rem;
+}
+
+.login-message p {
+  margin: 0 0 1.5rem 0;
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.auth-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.register-btn {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.register-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+}
+
+.login-btn {
+  background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+  color: white;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
 }
 
 /* Responsive Design */

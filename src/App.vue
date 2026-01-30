@@ -49,7 +49,7 @@ defineExpose({
       </nav>
     </header>
     <main>
-      <GoldPurityCalculator />
+      <GoldPurityCalculator :isLoggedIn="isLoggedIn" @open-register="openRegisterModal" @open-login="openLoginModal" />
     </main>
     <LoginModal ref="loginModal" @login-success="handleLogin" />
     <RegisterModal ref="registerModal" @register-success="handleLogin" />
