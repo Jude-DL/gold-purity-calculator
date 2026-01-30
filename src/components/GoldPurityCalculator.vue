@@ -5,20 +5,8 @@
       <p class="subtitle">Calculate gold prices with VAT for different karat purities</p>
     </div>
 
-    <!-- Login Required Message -->
-    <div v-if="!isLoggedIn" class="login-required">
-      <div class="login-message">
-        <h3>Login Required</h3>
-        <p>Please register or login to use the gold purity calculator.</p>
-        <div class="auth-buttons">
-          <button @click="$emit('open-register')" class="auth-btn register-btn">Register</button>
-          <button @click="$emit('open-login')" class="auth-btn login-btn">Login</button>
-        </div>
-      </div>
-    </div>
-
     <!-- Calculator Grid -->
-    <div v-else class="calculators-grid">
+    <div class="calculators-grid">
       <div v-for="(price, karat) in goldPrices" :key="karat" class="calculator-card">
         <div class="card-header">
           <h3>{{ karat }}K Gold</h3>
